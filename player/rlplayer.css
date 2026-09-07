@@ -1,7 +1,7 @@
 /*!
  * Copyright (c) Atomi Systems, Inc. All rights reserved.
- * Version: 10.1.0
- * Date: 2025.10.24
+ * Version: 10.5.1
+ * Date: 2026.06.10
  */
 ::-webkit-scrollbar {
 	width: 6px;
@@ -326,6 +326,16 @@ video::-webkit-media-controls { /* hide media controls by default */
 .ap-canvas {
 	position: absolute;
 	-webkit-overflow-scrolling: touch;
+}
+
+.ap-detailed-result table {
+	border-collapse: collapse;
+	border: var(--bdr, 1px) solid #808080;
+}
+.ap-detailed-result th,
+.ap-detailed-result td {
+	border: var(--bdr, 1px) solid #808080;
+	padding: 2px;
 }
 
 .ap-prez-state-btn {
@@ -1531,12 +1541,22 @@ video::-webkit-media-controls { /* hide media controls by default */
 	border-color: rgb(179, 179, 179);
 }
 
+.ap-prez-container[data-mode='1'] .ap-drawing-tool-menu {
+	font-family: Arial;
+	font-size: 13px;
+}
+
 .ap-prez-container[data-mode='2'] .ap-menu {
 	font-family: Arial;
 	font-size: 13px;
 	color: rgb(0, 0, 0);
 	background-color: rgb(224, 224, 224);
 	border-color: rgb(179, 179, 179);
+}
+
+.ap-prez-container[data-mode='2'] .ap-drawing-tool-menu {
+	font-family: Arial;
+	font-size: 13px;
 }
 
 .ap-prez-container[data-mode='3'] .ap-menu {
@@ -1547,12 +1567,22 @@ video::-webkit-media-controls { /* hide media controls by default */
 	border-color: rgb(179, 179, 179);
 }
 
+.ap-prez-container[data-mode='3'] .ap-drawing-tool-menu {
+	font-family: Arial;
+	font-size: 13px;
+}
+
 .ap-prez-container[data-mode='4'] .ap-menu {
 	font-family: Arial;
 	font-size: 13px;
 	color: rgb(0, 0, 0);
 	background-color: rgb(224, 224, 224);
 	border-color: rgb(179, 179, 179);
+}
+
+.ap-prez-container[data-mode='4'] .ap-drawing-tool-menu {
+	font-family: Arial;
+	font-size: 13px;
 }
 
 .ap-menu-item {
@@ -1753,6 +1783,14 @@ video::-webkit-media-controls { /* hide media controls by default */
 
 .ap-menu-item.ap-tool-menu-back .ap-menu-item-icon svg {
 	display: block;
+}
+
+.ap-drawing-tool-menu {
+	position: absolute;
+	display: flex;
+	width: max-content;
+	height: max-content;
+	z-index: 5;
 }
 
 /* Media control */
