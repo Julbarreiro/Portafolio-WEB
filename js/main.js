@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'res_10022', 'res_10024', 'res_10025', 'res_10027', 'res_10032',
         'res_10034', 'res_10035', 'res_10037', 'res_10038', 'res_10039',
         'res_10040', 'res_10044', 'res_10046', 'res_10047', 'res_10050',
-        'res_10051', 'Arduino_ESP32', 'res_10338', 'res_10628', 'res_10629',
+        'res_10051', 'Arduino_ESP32.jpg', 'res_10338', 'res_10628', 'res_10629',
         'res_10630', 'res_10632', 'res_10633', 'res_10634', 'res_10635'
     ];
 
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ? ['.mp4', '.webm', '.mov']
                         : ['.png', '.jpg', '.jpeg', '.webp'];
 
-        const resourceFolders = ['../resources/', 'resources/'];
+        const resourceFolders = ['resources/'];
         return Array.from(variants).flatMap(name =>
             resourceFolders.flatMap(folder =>
                 extensions.map(extension => `${folder}${encodeURIComponent(name + extension)}`)

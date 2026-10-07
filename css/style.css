@@ -504,12 +504,15 @@ body {
     width: 100%;
     overflow: hidden;
     padding: 0.35rem 0 0.75rem;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent);
     mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent);
 }
 
 .profile-carousel-content {
     display: flex;
+    width: -webkit-max-content;
     width: max-content;
+    -webkit-animation: profile-carousel-drift 70s linear infinite;
     animation: profile-carousel-drift 70s linear infinite;
 }
 
@@ -518,6 +521,11 @@ body {
     flex: 0 0 auto;
     gap: 0.75rem;
     padding-right: 0.75rem;
+}
+
+@-webkit-keyframes profile-carousel-drift {
+    from { -webkit-transform: translate3d(0, 0, 0); }
+    to { -webkit-transform: translate3d(-50%, 0, 0); }
 }
 
 @keyframes profile-carousel-drift {
@@ -552,6 +560,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
     .profile-carousel-content {
+        -webkit-animation: none;
         animation: none;
     }
 }
