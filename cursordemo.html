@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cursor Secuencia Completa - GSAP</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: none !important;
+    }
+
+    body {
+      background-color: #080a10;
+      color: #ffffff;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    /* 1. CURSOR BASE: Anillo blanco estático (26px) */
+    .custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 26px;
+      height: 26px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      background-color: transparent;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.15s cubic-bezier(0.2, 0, 0.2, 1), 
+                  height 0.15s cubic-bezier(0.2, 0, 0.2, 1), 
+                  background-color 0.15s ease, 
+                  border-color 0.15s ease;
+    }
+
+    /* ESTADO PRESIONADO (mousedown) */
+    .custom-cursor.is-down {
+      width: 12px;
+      height: 12px;
+      background-color: #2b7fff;
+      border-color: #2b7fff;
+    }
+
+    /* 2. EXPANSIÓN DEL PUNTO CENTRAL (El que se desvanece al soltar) */
+    .cursor-dot-burst {
+      position: fixed;
+      background-color: #2b7fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9997;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(43, 127, 255, 0.8);
+    }
+
+    /* 3. ARO AZUL EXTERIOR (Onda expansiva lejana) */
+    .cursor-ripple {
+      position: fixed;
+      width: 120px;
+      height: 120px;
+      border: 1.5px solid rgba(43, 127, 255, 0.85);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      box-sizing: border-box;
+      transform: translate(-50%, -50%);
+    }
+
+    /* 4. PARTÍCULAS AZULES */
+    .cursor-particle {
+      position: fixed;
+      width: 3.5px;
+      height: 3.5px;
+      background-color: #2b7fff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      box-shadow: 0 0 6px rgba(43, 127, 255, 0.9);
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="custom-cursor"></div>
+  <h2>Presiona, mantén y suelta para ver el desvanecimiento</h2>
+
+  <script>
+    const cursor = document.querySelector('.custom-cursor');
+
+    document.addEventListener('mousemove', (e) => {
+      gsap.set(cursor, { x: e.clientX, y: e.clientY });
+    });
+
+    document.addEventListener('mousedown', () => {
+      cursor.classList.add('is-down');
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      cursor.classList.remove('is-down');
+      createBurst(e.clientX, e.clientY);
+    });
+
+    function createBurst(x, y) {
+      // A. EL PUNTO QUE CRECE Y SE DESVANECE (Expansión corta y lenta)
+      const dotBurst = document.createElement('div');
+      dotBurst.className = 'cursor-dot-burst';
+      dotBurst.style.left = `${x}px`;
+      dotBurst.style.top = `${y}px`;
+      document.body.appendChild(dotBurst);
+
+      gsap.fromTo(dotBurst, 
+        { width: 12, height: 12, opacity: 1 },
+        { 
+          width: 38, // Crece ligeramente más allá del aro blanco original
+          height: 38, 
+          opacity: 0, 
+          duration: 0.4, // Un fade out suave
+          ease: "power2.out", 
+          onComplete: () => dotBurst.remove() 
+        }
+      );
+
+      // B. ARO AZUL EXTERIOR (Se expande lejos)
+      const ripple = document.createElement('div');
+      ripple.className = 'cursor-ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      document.body.appendChild(ripple);
+
+      gsap.fromTo(ripple,
+        { scale: 0.15, opacity: 0.9 },
+        { scale: 1.1, opacity: 0, duration: 0.5, ease: "power2.out", onComplete: () => ripple.remove() }
+      );
+
+      // C. PARTÍCULAS: Rebasan al punto central
+      const particleCount = 7;
+      const startDistance = 5;  
+      const maxDistance = 45;    
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'cursor-particle';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        document.body.appendChild(particle);
+
+        const angle = (i / particleCount) * Math.PI * 2;
+        const startX = Math.cos(angle) * startDistance;
+        const startY = Math.sin(angle) * startDistance;
+        
+        const targetX = Math.cos(angle) * maxDistance;
+        const targetY = Math.sin(angle) * maxDistance;
+
+        gsap.to(particle, {
+          keyframes: [
+            { x: startX, y: startY, scale: 1.2, opacity: 1, duration: 0.08, ease: "power1.in" },
+            // En esta etapa (220ms), las partículas cruzan a 31px, rebasando los 19px de radio del dotBurst
+            { x: targetX * 0.7, y: targetY * 0.7, scale: 0.9, opacity: 0.85, duration: 0.22, ease: "none" },
+            { x: targetX, y: targetY, scale: 0.2, opacity: 0, duration: 0.45, ease: "power3.out" }
+          ],
+          onComplete: () => particle.remove()
+        });
+      }
+    }
+  </script>
+</body>
+</html>
